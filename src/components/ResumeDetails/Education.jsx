@@ -18,7 +18,7 @@ function Education() {
     formState: { errors, isSubmitting },
   } = useForm();
   const [modal, setModal] = useState(false);
-console.log(allresumes)
+console.log(allresumes) 
   const currentResume = allresumes?.find((resume) => {
     return resume.id === resumeid;
   });
@@ -58,9 +58,9 @@ console.log(allresumes)
           Save & Next
         </button>
 
-      </div>
+      </div> 
       {
-        currentResume.resumedata?.educationDetails?.map((education,index)=>{
+        currentResume && currentResume.resumedata?.educationDetails?.map((education,index)=>{
           return <EducationCard education={education} key={index}/>
         })
       }

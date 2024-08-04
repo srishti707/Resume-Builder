@@ -25,7 +25,7 @@ export default function useResume(){
                 return allresumes
             }
             catch(e){
-               //...
+               //..
 
             }
             

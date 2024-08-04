@@ -8,10 +8,11 @@ import useResume from '../../hooks/useResume'
 import { db } from '../../firebase/Firebase'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { useParams } from 'react-router-dom'
+import InternshipCard from '../UI/InternshipCard'
 
 function Internships() {
   const {data:user }=useUser()
-  const {resumeid}=useParams()
+  const {resumeid,templateid}=useParams()
   const {data:allResume}=useResume()
   const [isOpen,setIsOpen]=useState(false)
 const {register,handleSubmit,formState:{errors}}=useForm()
@@ -20,13 +21,19 @@ const currentResume=allResume?.find((resume)=>resume.id===resumeid)
 async function submitHandler(data){
 console.log(data)
 setIsOpen(false)
-const docRef=doc(db,`users/${user.uid}/resumeCollection/${resumeid}`)
+const docRef=doc(db,`users/${user?.uid}/resumeCollection/${resumeid}`)
 const docData=getDoc(docRef)
+const existingData=docData.data() || []
+const updatedData=existingData.internshipDetails?[...existingData.details,data]:[data]
 if(docData.exists()){
-await updateDoc(docData,{internshipDetails:data})
+await updateDoc(docRef,{internshipDetails:updatedData})
 }
 else{
-  await setDoc()
+  await setDoc(docRef,{
+    templateid,
+    name,
+    internshipDetails:updatedData
+  })
 }
 }
   return (
@@ -46,6 +53,13 @@ else{
       <button className='bg-violet-500 disabled:bg-gray-500 text-white px-5 py-2 rounded-lg'>Save & Next</button>
 
   </div>
+  {
+    currentResume && currentResume.resumedata.internshipDetail?.map((internship,index)=>{
+      return (
+        <InternshipCard key={index}  internship={internship} index={index} />
+      )
+    })
+  }
   <Modal isOpen={isOpen} onClose={()=>setIsOpen(false)}>
   <motion.form onSubmit={handleSubmit(submitHandler)}
    className='grid grid-cols-12 gap-2 px-10 py-10 lg:w-[800px]'>
